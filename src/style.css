@@ -1,6 +1,17 @@
-html,body,#cariddi-webgl{height:100%;margin:0}
+/* src/style.css - For main site, AFTER splash */
+html,body { /* Remove #cariddi-webgl if splash handles its own canvas styling */
+  height:100%;
+  margin:0;
+}
+
 body{
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif; /* Broader font stack */
   background:#f9f4ee;          /* light ivory after splash */
   color:#2a2a2a;
+  line-height: 1.6; /* Improved readability */
+}
+
+/* Add other global styles for your site here */
+h1, h2, h3 {
+    color: #111; /* Darker headings for contrast */
 }
