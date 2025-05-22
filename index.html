@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cariddi – Endless Whirlpool</title>
+  <style>
+    html,body{
+      height:100%;margin:0;display:flex;justify-content:center;align-items:center;
+      background:#218d8d;
+    }
+    .spiral{
+      width:75vmin;
+      aspect-ratio:1/1;
+      animation:spin 12s linear infinite;
+      transform-origin:center center;
+      display:block;
+    }
+    @keyframes spin{to{transform:rotate(360deg);}}
+  </style>
+</head>
+<body>
+  <!-- External SVG reference; Vite serves it from /public -->
+  <img src="/cariddi-spiral.svg" alt="Cariddi spiral" class="spiral" />
+</body>
+</html>
