@@ -13,7 +13,7 @@
       margin: 0;
       overflow: hidden; 
       font-family: 'Montserrat', sans-serif; 
-      background-color: #0a0a10; /* Very dark base */
+      background-color: #0a0a10; /* Fallback very dark base */
     }
 
     #splash-screen {
@@ -22,27 +22,30 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background-color: #0c141f; /* Deep, dark blue-grey for the initial phase / left side */
-      display: flex; /* Initial centering, will be changed by GSAP for phase 2 */
-      justify-content: center;
-      align-items: center;
+      /* Background set by children, or can be a default if children are transparent initially */
+      /* background-color: #0c141f; */ 
+      display: flex; /* Will be used by GSAP for phase 2, but initial state handled by #initial-splash-content positioning */
+      justify-content: center; /* For initial centering if #initial-splash-content wasn't absolute */
+      align-items: center; /* For initial centering */
       z-index: 10000;
       opacity: 1; 
       color: #e0e0e0; 
     }
 
     /* Container for the initial centered content (spiral + original text) */
+    /* This will be the left pane in Phase 2 */
     #initial-splash-content {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      position: absolute; /* Will be animated to relative by GSAP */
-      width: 100%; /* Starts full width */
+      position: absolute; 
+      width: 100%; 
       height: 100%;
       top:0;
       left:0;
-      /* background-color: #0c141f; /* Ensure this matches splash-screen if needed */
+      background-color: #218d8d; /* CHANGED: Teal background for Phase 1 and left pane */
+      transition: background-color 0.5s ease; /* Smooth color transition if ever needed */
     }
 
     #splash-svg-image {
@@ -52,7 +55,6 @@
       max-height: 250px;
       display: block;
       margin-bottom: 20px; 
-      /* filter: brightness(100%) saturate(100%); /* Initial filter state */
     }
 
     #splash-text-overlay {
@@ -66,35 +68,35 @@
       font-weight: 600;
       letter-spacing: 0.05em; 
       margin-bottom: 0.1em;
-      color: #d4af37; /* Gold accent */
-      text-shadow: 0 0 8px rgba(212, 175, 55, 0.4); 
+      color: #ffffff; /* White text on Teal */
+      text-shadow: 0 0 8px rgba(0,0,0, 0.3); 
     }
 
     #splash-text-overlay .location {
       font-size: clamp(0.7em, 1.8vw, 1em); 
       font-weight: 300;
       letter-spacing: 0.05em;
-      color: #b0b0b0; 
+      color: #f0f0f0; /* Lighter text on Teal */
       text-transform: uppercase;
     }
 
     /* Container for the right-side content (CARIDDI FILM logo, menu) */
     #right-pane-content {
-      position: absolute; /* Will be animated to relative by GSAP */
+      position: absolute; 
       right: 0;
       top: 0;
-      width: 0%; /* Initially hidden, will expand */
+      width: 0%; 
       height: 100%;
-      background-color: #2a3045; /* CHANGED: Dark Slate Blue/Purple */
+      background-color: #2a3045; /* Dark Slate Blue for right pane */
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       padding: 40px;
       box-sizing: border-box;
-      opacity: 0; /* Initially hidden */
+      opacity: 0; 
       overflow: hidden;
-      color: #f0e6d2; /* Creamy off-white for text on dark bg */
+      color: #f0e6d2; 
     }
 
     .cariddi-film-logo {
@@ -109,7 +111,7 @@
     
     .film-location {
       font-size: clamp(0.8em, 2vw, 1.1em);
-      color: #c0c0c0; /* Silver/grey */
+      color: #c0c0c0; 
       margin-bottom: 40px;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -135,11 +137,10 @@
     }
 
     .main-menu li a:hover {
-      color: #d4af37; /* Gold on hover */
+      color: #d4af37; 
       letter-spacing: 2px;
     }
 
-    /* Hidden #site div, not used in this infinite splash version */
     #site { display: none; }
 
   </style>
