@@ -6,139 +6,193 @@
   <title>CARIDDI FILM – Catania</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Spectral+SC:wght@600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/src/style.css"> 
   <style>
+    :root {
+      --ink: #0D0D0D;
+      --ionian: #0077B6; /* CTA / links */
+      --sand: #EBD9B4;   /* Headings / highlights */
+      --lava: #C73B3B;   /* Error / active states */
+      --teal: #108D8A;   /* Accent bg (spiral) */
+
+      /* Typographic scale (approximate, will be refined with clamps) */
+      --font-size-h1: clamp(48px, 5vw, 72px);
+      --font-size-h2: clamp(28px, 4vw, 32px); /* Adjusted for H2 role */
+      --font-size-body: clamp(16px, 2vw, 18px);
+      --font-size-caption: clamp(12px, 1.8vw, 14px);
+    }
+
     body {
       margin: 0;
       overflow: hidden; 
-      font-family: 'Montserrat', sans-serif; 
-      background-color: #0a0a10; /* Fallback very dark base */
+      font-family: 'Inter', sans-serif; 
+      background-color: var(--ink); 
+      color: var(--sand); /* Default text color changed to sand for better contrast on ink */
+      font-size: var(--font-size-body);
+      line-height: 1.6;
     }
 
-    #splash-screen {
+    #hero-section {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
-      height: 100vh;
-      /* Background set by children, or can be a default if children are transparent initially */
-      /* background-color: #0c141f; */ 
-      display: flex; /* Will be used by GSAP for phase 2, but initial state handled by #initial-splash-content positioning */
-      justify-content: center; /* For initial centering if #initial-splash-content wasn't absolute */
-      align-items: center; /* For initial centering */
+      height: 100vh; /* Using 100vh, can be adjusted with min(90vh, 1080px) via JS if needed for ultrawide */
+      /* min-height: min(90vh, 1080px); */ /* This CSS syntax for min() might not be fully supported, JS might be better for complex min/max viewport calcs */
+      display: flex; 
       z-index: 10000;
       opacity: 1; 
-      color: #e0e0e0; 
     }
 
-    /* Container for the initial centered content (spiral + original text) */
-    /* This will be the left pane in Phase 2 */
-    #initial-splash-content {
+    /* Grid & Proportion: Left 5/12, Right 7/12 */
+    #left-hero-pane {
+      width: 41.66666%; /* 5/12 */
+      height: 100%;
+      background-color: var(--ink); 
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      position: absolute; 
-      width: 100%; 
-      height: 100%;
-      top:0;
-      left:0;
-      background-color: #218d8d; /* CHANGED: Teal background for Phase 1 and left pane */
-      transition: background-color 0.5s ease; /* Smooth color transition if ever needed */
-    }
-
-    #splash-svg-image {
-      width: 25vmin; 
-      height: 25vmin;
-      max-width: 250px; 
-      max-height: 250px;
-      display: block;
-      margin-bottom: 20px; 
-    }
-
-    #splash-text-overlay {
-      text-align: center;
-      opacity: 0; 
-      padding: 10px; 
-    }
-
-    #splash-text-overlay .company-name {
-      font-size: clamp(1.5em, 4vw, 2.8em); 
-      font-weight: 600;
-      letter-spacing: 0.05em; 
-      margin-bottom: 0.1em;
-      color: #ffffff; /* White text on Teal */
-      text-shadow: 0 0 8px rgba(0,0,0, 0.3); 
-    }
-
-    #splash-text-overlay .location {
-      font-size: clamp(0.7em, 1.8vw, 1em); 
-      font-weight: 300;
-      letter-spacing: 0.05em;
-      color: #f0f0f0; /* Lighter text on Teal */
-      text-transform: uppercase;
-    }
-
-    /* Container for the right-side content (CARIDDI FILM logo, menu) */
-    #right-pane-content {
-      position: absolute; 
-      right: 0;
-      top: 0;
-      width: 0%; 
-      height: 100%;
-      background-color: #2a3045; /* Dark Slate Blue for right pane */
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 40px;
+      /* justify-content: space-between; /* Pushes header to top, CTA block towards bottom */
+      padding: clamp(24px, 5vh, 96px) clamp(1rem, 4vw, 3rem); /* Vertical rhythm top/bottom, fluid side padding */
       box-sizing: border-box;
-      opacity: 0; 
-      overflow: hidden;
-      color: #f0e6d2; 
+      opacity: 0; /* For fade-in animation */
     }
 
-    .cariddi-film-logo {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(2.5em, 7vw, 5em);
-      font-weight: 700;
-      color: #d4af37; /* Gold */
-      text-shadow: 1px 1px 2px #000000, 0 0 15px rgba(212, 175, 55, 0.5);
-      margin-bottom: 30px;
-      letter-spacing: 2px;
+    .hero-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: clamp(24px, 5vh, 48px); /* Vertical rhythm */
+    }
+
+    .logo-hero { /* Was .logo */
+      font-family: 'Spectral SC', serif; /* As per spec */
+      font-weight: 600; /* As per spec */
+      font-size: var(--font-size-h2); /* Using H2 size for logo in header */
+      line-height: 1.2; /* As per spec for H2 */
+      letter-spacing: 0px; /* As per spec for H2 */
+      color: var(--sand);
+      text-shadow: 0 1px 6px rgba(244,163,0,0.25); /* Atmospheric glow */
+      margin: 0; /* Remove default margins */
     }
     
-    .film-location {
-      font-size: clamp(0.8em, 2vw, 1.1em);
-      color: #c0c0c0; 
-      margin-bottom: 40px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .main-menu ul {
+    #primary-nav ul { /* Was #secondary-menu */
       list-style: none;
       padding: 0;
       margin: 0;
-      text-align: center;
+      display: flex; 
+      gap: clamp(1rem, 2vw, 1.5rem); 
     }
 
-    .main-menu li a {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 400;
+    #primary-nav li a {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400; /* Body weight for nav links */
       text-decoration: none;
-      color: #e0e0e0;
-      font-size: clamp(1em, 2.5vw, 1.5em);
-      display: block;
-      padding: 12px 0;
-      transition: color 0.3s ease, letter-spacing 0.3s ease;
-      letter-spacing: 1px;
+      color: var(--sand); /* Sand for better contrast on ink */
+      opacity: 0.8;
+      font-size: var(--font-size-caption); /* Caption size for nav */
+      line-height: 1.4; /* Caption line height */
+      letter-spacing: 1px; /* Caption tracking */
+      transition: opacity 0.3s ease, color 0.3s ease;
     }
 
-    .main-menu li a:hover {
-      color: #d4af37; 
-      letter-spacing: 2px;
+    #primary-nav li a:hover {
+      opacity: 1;
+      color: var(--ionian); /* Ionian blue for hover */
+    }
+
+    .hero-content {
+        margin-top: clamp(24px, 5vh, 96px); /* Vertical rhythm */
+        flex-grow: 1; /* Allows CTA to be pushed down if content is short */
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Vertically center the main H1/tagline/CTA block */
+    }
+    
+    .headline-h1 { /* New class for the main headline */
+      font-family: 'Spectral SC', serif;
+      font-weight: 600;
+      font-size: var(--font-size-h1);
+      line-height: 1.1;
+      letter-spacing: -1px; /* Slightly tighter for large display text */
+      color: var(--sand);
+      text-shadow: 0 1px 6px rgba(244,163,0,0.25); /* Atmospheric glow */
+      margin-bottom: clamp(12px, 2.5vh, 24px); /* Half bottom margin */
+    }
+
+    .tagline {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: var(--font-size-body);
+      line-height: 1.6;
+      letter-spacing: 0.25px;
+      color: var(--sand); 
+      opacity: 0.9;
+      margin-bottom: clamp(24px, 5vh, 48px); /* Vertical rhythm */
+      max-width: 450px; 
+    }
+    
+    #cta-button {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600; /* H2 weight for CTA text */
+      font-size: var(--font-size-body); /* Body size for CTA text */
+      line-height: 1.2; /* H2 line height */
+      letter-spacing: 0px; /* H2 tracking */
+      color: var(--ink); 
+      background-color: var(--ionian); 
+      border: none;
+      padding: 0.75rem 1.5rem; 
+      text-transform: uppercase; /* Often good for CTAs */
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      border-radius: 0.75rem; 
+      min-width: 200px; 
+      min-height: 48px; /* Adjusted from 44px */
+      display: inline-flex; /* For aligning icon and text */
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    #cta-button .icon {
+      width: 1.2em;
+      height: 1.2em;
+      margin-left: 0.5em;
+      transition: transform 0.3s ease;
+    }
+
+    #cta-button:hover {
+      background-color: #005f8c; /* Darker Ionian blue */
+      transform: scale(1.02); 
+      box-shadow: 0 4px 12px rgba(0,119,182,.35);
+    }
+    #cta-button:hover .icon {
+      transform: translateX(4px); /* group-hover:translate-x-2 equivalent */
+    }
+
+
+    #right-hero-pane {
+      width: 58.33333%; /* 7/12 */
+      height: 100%;
+      background-color: var(--teal); 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      position: relative; 
+      opacity: 0; 
+    }
+
+    #splash-svg-image {
+      width: 55%; /* 55% of right column width */
+      height: auto; /* Maintain aspect ratio */
+      max-width: 90%; /* Ensure it doesn't overflow if 55% is still too large */
+      max-height: 90%;
+      display: block;
+      /* Assuming SVG is light-colored to contrast with teal */
+      /* filter: brightness(110%) saturate(110%); */ /* Removed, as SVG color should handle this */
     }
 
     #site { display: none; }
@@ -147,31 +201,34 @@
 </head>
 <body>
 
-  <div id="splash-screen">
-    <div id="initial-splash-content">
-      <img src="/cariddi-spiral.svg" alt="Cariddi Productions Spiral" id="splash-svg-image" />
-      <div id="splash-text-overlay">
-        <div class="company-name">CARIDDI PRODUCTIONS</div>
-        <div class="location">Catania, Sicily</div>
+  <div id="hero-section"> 
+    <div id="left-hero-pane">
+      <header class="hero-header">
+        <div class="logo-hero">CARIDDI FILM</div>
+        <nav id="primary-nav"> <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+      </header>
+      <div class="hero-content">
+        <h1 class="headline-h1">Sicilian stories, <br>told on global screens.</h1>
+        <p class="tagline">Crafting cinematic narratives that resonate from the heart of the Mediterranean to audiences worldwide. Discover the vision of Cariddi Film.</p>
+        <a href="#projects" id="cta-button" class="cta group"> <span>Explore Our Work</span>
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd" />
+          </svg>
+        </a>
       </div>
     </div>
 
-    <div id="right-pane-content">
-      <div class="cariddi-film-logo">CARIDDI FILM</div>
-      <div class="film-location">Catania</div>
-      <nav class="main-menu">
-        <ul>
-          <li><a href="#home">HOME</a></li>
-          <li><a href="#projects">PROJECTS</a></li>
-          <li><a href="#about">ABOUT</a></li>
-          <li><a href="#contact">CONTACT US</a></li>
-        </ul>
-      </nav>
-    </div>
+    <div id="right-hero-pane">
+      <img src="/cariddi-spiral.svg" id="splash-svg-image" alt="Rotating Cariddi brand mark" /> </div>
   </div>
 
   <div id="site" hidden> 
-    <h1>Welcome to Cariddi Productions</h1>
+    <h1>Main Site Content</h1>
   </div>
 
   <script type="module" src="/src/main_2D.js"></script>

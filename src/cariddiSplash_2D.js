@@ -1,159 +1,139 @@
-// src/cariddiSplash_2D.js (Two-Phase Animation - Finalized Large Spiral Loop)
+// src/cariddiSplash_2D.js (Guidelines Redesign - Autopsy Fixes with Improved Error Logging)
 
 import { gsap } from 'gsap';
 
-console.log("CariddiSplash_2D.js: Script loaded (Two-Phase - Finalized Large Spiral Loop)");
+console.log("CariddiSplash_2D.js: Script loaded (Guidelines Redesign - Autopsy Fixes v2)");
 
 export function initCariddiSplash2D({
-  splashScreenSelector = '#splash-screen',
-  initialContentSelector = '#initial-splash-content', 
+  heroSelector = '#hero-section',
+  leftPaneSelector = '#left-hero-pane',
+  rightPaneSelector = '#right-hero-pane',
   svgImageSelector = '#splash-svg-image',
-  textOverlaySelector = '#splash-text-overlay', // Original text
-  rightPaneSelector = '#right-pane-content', 
-
-  phaseOneDuration = 5, 
   
-  spinDuration = 12, 
-  pulsateAmplitude = 0.1, // Pulsation relative to current scale
-  pulsatePeriod = 1.8, 
+  // Specific elements for staggered animation in left pane
+  logoSelector = '.logo-hero', 
+  primaryNavSelector = '#primary-nav', 
+  headlineSelector = '.headline-h1', 
+  taglineSelector = '.tagline',
+  ctaButtonSelector = '#cta-button',
   
-  textFadeInDelay = 1.0, 
-  textFadeInDuration = 1.5,
+  entryAnimationDuration = 1.8, 
+  staggerAmount = 0.15, 
 
-  transitionDuration = 3.0 
+  spinDuration = 18, 
+  pulsateAmplitude = 0.06, 
+  pulsatePeriod = 2.2, 
 } = {}) {
 
-  console.log("CariddiSplash_2D.js: initCariddiSplash2D (Finalized Large Spiral Loop) called");
+  console.log("CariddiSplash_2D.js: initCariddiSplash2D (Guidelines Autopsy Fixes v2) called");
 
-  const splashScreen = document.querySelector(splashScreenSelector);
-  const initialContent = document.querySelector(initialContentSelector);
-  const svgImage = document.querySelector(svgImageSelector);
-  const textOverlay = document.querySelector(textOverlaySelector); // Original "CARIDDI PRODUCTIONS" text
-  const rightPane = document.querySelector(rightPaneSelector);
+  // Store selectors for easier logging
+  const selectors = {
+    heroSection: heroSelector,
+    leftPane: leftPaneSelector,
+    rightPane: rightPaneSelector,
+    svgImage: svgImageSelector,
+    logo: logoSelector,
+    primaryNav: primaryNavSelector,
+    headline: headlineSelector,
+    tagline: taglineSelector,
+    ctaButton: ctaButtonSelector
+  };
 
-  if (!splashScreen || !initialContent || !svgImage || !textOverlay || !rightPane) {
-    console.error('CariddiSplash_2D.js: Critical DOM elements not found for two-phase animation.');
-    if (splashScreen) {
-        splashScreen.innerHTML = "<p style='color:white; text-align:center;'>Error: Splash elements missing.</p>";
+  // Select all elements
+  const elements = {
+    heroSection: document.querySelector(selectors.heroSection),
+    leftPane: document.querySelector(selectors.leftPane),
+    rightPane: document.querySelector(selectors.rightPane),
+    svgImage: document.querySelector(selectors.svgImage),
+    logo: document.querySelector(selectors.logo),
+    primaryNav: document.querySelector(selectors.primaryNav),
+    headline: document.querySelector(selectors.headline),
+    tagline: document.querySelector(selectors.tagline),
+    ctaButton: document.querySelector(selectors.ctaButton)
+  };
+  
+  let allElementsFound = true;
+  for (const key in elements) {
+    if (!elements[key]) {
+      console.error(`CariddiSplash_2D.js: CRITICAL ERROR - Element with selector '${selectors[key]}' (for key: ${key}) not found in the DOM.`);
+      allElementsFound = false;
     }
-    return;
   }
-  console.log("CariddiSplash_2D.js: All critical DOM elements found.");
+
+  if (!allElementsFound) {
+    // Try to display an error message on the page if possible
+    const hero = elements.heroSection || document.body; // Fallback to body if heroSection itself is missing
+    if (hero) {
+        hero.innerHTML = "<p style='color:var(--sand); text-align:center; padding: 20vh 20px; font-size: 1.2em;'>Error: A critical page element is missing. Please check the browser console (F12) for details (look for 'CRITICAL ERROR').</p>";
+    }
+    return; // Stop execution
+  }
+
+  console.log("CariddiSplash_2D.js: All critical DOM elements successfully found.");
+
 
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    console.warn('CariddiSplash_2D.js: Reduced motion preferred. Static display (Phase 1 only).');
-    gsap.set(svgImage, { opacity: 1, scale: 1 }); 
-    gsap.set(textOverlay, { opacity: 1 });
-    gsap.set(initialContent, { x: 0, width: "100%"}); 
-    gsap.set(rightPane, { opacity: 0, width: "0%" }); 
+    console.warn('CariddiSplash_2D.js: Reduced motion preferred. Static display.');
+    // Set opacity for all found elements directly
+    Object.values(elements).forEach(el => gsap.set(el, { opacity: 1, y: 0, x:0 }));
+    // Ensure panes are visible if they were initially set to x: "-100%" etc.
+    gsap.set(elements.leftPane, { x: "0%" });
+    gsap.set(elements.rightPane, { x: "0%" });
     return;
   }
-  console.log("CariddiSplash_2D.js: Proceeding with 2D animations.");
+  console.log("CariddiSplash_2D.js: Proceeding with animations.");
 
-  gsap.set(svgImage, { transformOrigin: "center center", filter: "brightness(100%) saturate(100%)" }); 
+  // Initial states for animation
+  gsap.set(elements.svgImage, { transformOrigin: "center center", scale: 0.7, opacity:0 });
+  gsap.set(elements.leftPane, {opacity: 1, x: "-100%"}); // Opacity 1 so it's visible once x is 0
+  gsap.set(elements.rightPane, {opacity: 1, x: "100%"}); // Opacity 1 so it's visible once x is 0
+  
+  // Staggered elements within left pane
+  gsap.set([elements.logo, elements.primaryNav, elements.headline, elements.tagline, elements.ctaButton], { opacity: 0, y: 40 });
 
-  // Phase 1: Initial centered animation 
-  // Continuous Spin Animation (will persist)
-  gsap.to(svgImage, {
+
+  // Entrance Animation Timeline
+  const entryTl = gsap.timeline({
+    defaults: { duration: entryAnimationDuration, ease: "power3.out" }
+  });
+
+  entryTl
+    .to(elements.leftPane, { x: "0%" }, 0)
+    .to(elements.rightPane, { x: "0%" }, 0.1) 
+    .to(elements.svgImage, { 
+        scale: 1, 
+        opacity: 1, 
+        duration: entryAnimationDuration * 0.8, 
+        ease: "elastic.out(1, 0.6)" 
+    }, staggerAmount * 1.5) 
+    .to(elements.logo, { opacity: 1, y: 0 }, staggerAmount * 2)
+    .to(elements.primaryNav, { opacity: 1, y: 0 }, staggerAmount * 2.5)
+    .to(elements.headline, { opacity: 1, y: 0 }, staggerAmount * 3)
+    .to(elements.tagline, { opacity: 1, y: 0 }, staggerAmount * 3.5)
+    .to(elements.ctaButton, { opacity: 1, y: 0 }, staggerAmount * 4);
+
+  console.log("CariddiSplash_2D.js: Entrance animations configured.");
+
+  // Continuous animations for the spiral
+  gsap.to(elements.svgImage, {
     rotation: "+=360", 
     duration: spinDuration,
     ease: "none",
     repeat: -1,
-    id: "initialSpin" // Give it an ID to potentially kill later if needed (not necessary here)
+    delay: entryAnimationDuration * 0.5 
   });
 
-  // Initial Pulsate Animation (will be killed and replaced in Phase 2)
-  let initialPulsateTween = gsap.to(svgImage, {
-    scale: 1 + pulsateAmplitude, // Relative to its current scale (which is 1 initially)
+  gsap.to(elements.svgImage, {
+    scale: `+=${pulsateAmplitude}`, 
+    transformOrigin: "center center",
     duration: pulsatePeriod / 2,
     ease: "sine.inOut",
     yoyo: true, 
     repeat: -1,
-    id: "initialPulsate"
-  });
-
-  // Fade in original text overlay
-  if (textOverlay) {
-    const companyNameEl = textOverlay.querySelector('.company-name');
-    const locationEl = textOverlay.querySelector('.location');
-    const initialTextTl = gsap.timeline();
-    if (companyNameEl) {
-      initialTextTl.fromTo(companyNameEl, 
-        { opacity: 0, y: 20 }, 
-        { opacity: 1, y: 0, duration: textFadeInDuration, ease: "power2.out" },
-        textFadeInDelay
-      );
-    }
-    if (locationEl) {
-      initialTextTl.fromTo(locationEl, 
-        { opacity: 0, y: 20 }, 
-        { opacity: 1, y: 0, duration: textFadeInDuration, ease: "power2.out" },
-        textFadeInDelay + 0.3 
-      );
-    }
-  }
-  console.log("CariddiSplash_2D.js: Phase 1 animations configured.");
-
-  // Phase 2: Transition after phaseOneDuration
-  gsap.delayedCall(phaseOneDuration, () => {
-    console.log("CariddiSplash_2D.js: Initiating Phase 2 - Transition to split screen.");
-    
-    // Kill the initial pulsation before starting new scale animations
-    if (initialPulsateTween) {
-      initialPulsateTween.kill();
-      console.log("CariddiSplash_2D.js: Initial pulsation tween killed.");
-    }
-    
-    const tlPhase2 = gsap.timeline({
-      defaults: { duration: transitionDuration, ease: "power3.inOut" } 
-    });
-
-    gsap.set(splashScreen, { display: 'flex', justifyContent: 'flex-start', alignItems: 'stretch' });
-    gsap.set(initialContent, { position: 'relative', width: '100%', height: '100%', x: '0%' }); 
-    gsap.set(rightPane, { position: 'relative', width: '0%', height: '100%', opacity: 0, x: '0%' }); 
-
-    const targetSpiralScale = 3.0; // The new base scale for the spiral
-
-    tlPhase2
-      .to(initialContent, { 
-        width: "35%", 
-      }, 0)
-      .to(svgImage, { 
-        scale: targetSpiralScale, // Zoom to the new target base scale
-        filter: "brightness(130%) saturate(60%) opacity(90%)", 
-        ease: "power2.out" 
-      }, 0)
-      .to(textOverlay, { // Original "CARIDDI PRODUCTIONS" text
-        opacity: 0, // Fade out completely
-        scale: 0.5, // Shrink it as it fades
-        y: "-=20", 
-        ease: "power2.inOut",
-        onComplete: () => {
-          gsap.set(textOverlay, { display: "none" }); // Hide it completely after fading
-          console.log("CariddiSplash_2D.js: Original text overlay hidden.");
-        }
-      }, 0) // Start fading out original text immediately with the transition
-      .to(rightPane, { 
-        width: "65%", 
-        opacity: 1,
-      }, 0);
-
-    // After the transition, re-initialize pulsation based on the new targetSpiralScale
-    tlPhase2.call(() => {
-      console.log("CariddiSplash_2D.js: Re-initializing pulsation for enlarged spiral.");
-      gsap.to(svgImage, {
-        // Pulsate relative to the new targetSpiralScale
-        scale: () => targetSpiralScale * (1 + pulsateAmplitude), 
-        duration: pulsatePeriod / 2,
-        ease: "sine.inOut",
-        yoyo: true, 
-        repeat: -1,
-        id: "enlargedPulsate"
-      });
-    }, [], `+=${transitionDuration * 0.1}`); // Call this slightly after transition starts, or at its end: `transitionDuration`
-
-    console.log("CariddiSplash_2D.js: Phase 2 transition animations configured.");
+    delay: entryAnimationDuration * 0.5 
   });
   
-  console.log("CariddiSplash_2D.js: initCariddiSplash2D (Finalized Large Spiral Loop) finished setup.");
+  console.log("CariddiSplash_2D.js: Continuous spiral animations configured.");
+  console.log("CariddiSplash_2D.js: initCariddiSplash2D (Guidelines Autopsy Fixes v2) finished setup.");
 }
