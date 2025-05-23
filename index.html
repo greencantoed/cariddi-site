@@ -3,172 +3,176 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cariddi Productions – Catania, Sicily</title>
+  <title>CARIDDI FILM – Catania</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css"> 
   <style>
-    /* Basic Reset & Full Viewport */
-    html, body {
-      height: 100%;
+    body {
       margin: 0;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      overflow: hidden; /* Hide scrollbars during splash */
+      overflow: hidden; 
+      font-family: 'Montserrat', sans-serif; 
+      background-color: #0a0a10; /* Very dark base */
     }
 
-    /* Splash Screen Container */
-    #splash-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: 1fr 1fr;
-      width: 100vw;
-      height: 100vh;
+    #splash-screen {
       position: fixed;
       top: 0;
       left: 0;
-      z-index: 10000; /* Ensure splash is on top */
-      background-color: #1a1a1a; /* Dark background for elegance */
-      color: #f0f0f0;
-    }
-
-    /* Quadrant Styling */
-    .quadrant {
-      display: flex;
+      width: 100vw;
+      height: 100vh;
+      background-color: #0c141f; /* Deep, dark blue-grey for the initial phase / left side */
+      display: flex; /* Initial centering, will be changed by GSAP for phase 2 */
       justify-content: center;
       align-items: center;
-      position: relative; /* For positioning elements within */
+      z-index: 10000;
+      opacity: 1; 
+      color: #e0e0e0; 
+    }
+
+    /* Container for the initial centered content (spiral + original text) */
+    #initial-splash-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: absolute; /* Will be animated to relative by GSAP */
+      width: 100%; /* Starts full width */
+      height: 100%;
+      top:0;
+      left:0;
+      /* background-color: #0c141f; /* Ensure this matches splash-screen if needed */
+    }
+
+    #splash-svg-image {
+      width: 25vmin; 
+      height: 25vmin;
+      max-width: 250px; 
+      max-height: 250px;
+      display: block;
+      margin-bottom: 20px; 
+      /* filter: brightness(100%) saturate(100%); /* Initial filter state */
+    }
+
+    #splash-text-overlay {
+      text-align: center;
+      opacity: 0; 
+      padding: 10px; 
+    }
+
+    #splash-text-overlay .company-name {
+      font-size: clamp(1.5em, 4vw, 2.8em); 
+      font-weight: 600;
+      letter-spacing: 0.05em; 
+      margin-bottom: 0.1em;
+      color: #d4af37; /* Gold accent */
+      text-shadow: 0 0 8px rgba(212, 175, 55, 0.4); 
+    }
+
+    #splash-text-overlay .location {
+      font-size: clamp(0.7em, 1.8vw, 1em); 
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      color: #b0b0b0; 
+      text-transform: uppercase;
+    }
+
+    /* Container for the right-side content (CARIDDI FILM logo, menu) */
+    #right-pane-content {
+      position: absolute; /* Will be animated to relative by GSAP */
+      right: 0;
+      top: 0;
+      width: 0%; /* Initially hidden, will expand */
+      height: 100%;
+      background-color: #2a3045; /* CHANGED: Dark Slate Blue/Purple */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      box-sizing: border-box;
+      opacity: 0; /* Initially hidden */
       overflow: hidden;
-      /* border: 1px dashed #333; */ /* For layout debugging */
+      color: #f0e6d2; /* Creamy off-white for text on dark bg */
     }
 
-    #splash-top-left {
-      background-color: #218d8d; /* Original spiral background */
-      /* The canvas will be injected here by cariddiSplash.js */
-    }
-    #splash-top-left canvas { /* Style for the canvas itself */
-        display: block; /* remove extra space below canvas */
-    }
-
-
-    #splash-top-right {
-      flex-direction: column;
-      justify-content: center; /* Align items to the start (top) */
-      align-items: flex-start; /* Align items to the start (left) */
-      padding: 40px;
-    }
-
-    #splash-bottom-left {
-      flex-direction: column;
-      justify-content: flex-end; /* Align content to bottom */
-      align-items: flex-start; /* Align content to left */
-      padding: 20px;
-      font-size: 0.9em;
-      color: #aaa;
-    }
-
-    #splash-bottom-right {
-      flex-direction: column;
-      justify-content: flex-end; /* Align items to the end (bottom) */
-      align-items: flex-start; /* Align items to the start (left) */
-      padding: 40px;
+    .cariddi-film-logo {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.5em, 7vw, 5em);
+      font-weight: 700;
+      color: #d4af37; /* Gold */
+      text-shadow: 1px 1px 2px #000000, 0 0 15px rgba(212, 175, 55, 0.5);
+      margin-bottom: 30px;
+      letter-spacing: 2px;
     }
     
-    /* Company Title */
-    .company-title {
-        font-size: 2.8em;
-        font-weight: bold;
-        color: #ffffff;
-        margin-bottom: 10px;
-        letter-spacing: 1px;
-        line-height: 1.2;
-    }
-    .company-subtitle {
-        font-size: 1.2em;
-        color: #cccccc;
-        margin-bottom: 30px;
+    .film-location {
+      font-size: clamp(0.8em, 2vw, 1.1em);
+      color: #c0c0c0; /* Silver/grey */
+      margin-bottom: 40px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
-
-    /* Menu Styling */
-    .splash-menu ul {
+    .main-menu ul {
       list-style: none;
       padding: 0;
       margin: 0;
+      text-align: center;
     }
 
-    .splash-menu li a {
+    .main-menu li a {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
       text-decoration: none;
       color: #e0e0e0;
-      font-size: 1.5em; /* Larger, more impactful menu items */
+      font-size: clamp(1em, 2.5vw, 1.5em);
       display: block;
-      padding: 10px 0;
-      transition: color 0.3s ease, transform 0.3s ease;
-      font-weight: 300;
+      padding: 12px 0;
+      transition: color 0.3s ease, letter-spacing 0.3s ease;
+      letter-spacing: 1px;
     }
 
-    .splash-menu li a:hover {
-      color: #218d8d; /* Accent color on hover */
-      transform: translateX(5px);
+    .main-menu li a:hover {
+      color: #d4af37; /* Gold on hover */
+      letter-spacing: 2px;
     }
-    
-    /* Fallback for no-JS / Post-Splash Spiral (Original simpler version) */
-    #fallback-spiral-container {
-        display: none; /* Hidden by default, shown if JS fails or after splash */
-        width:100%;height:100%;margin:0;display:flex;justify-content:center;align-items:center;
-        background:#218d8d;
-    }
-    .spiral-fallback{
-      width:75vmin;
-      aspect-ratio:1/1;
-      animation:spin 12s linear infinite;
-      transform-origin:center center;
-      display:block;
-    }
-    @keyframes spin{to{transform:rotate(360deg);}}
 
+    /* Hidden #site div, not used in this infinite splash version */
+    #site { display: none; }
 
-    /* Main Site Content (Initially Hidden) */
-    #site {
-      padding: 20px;
-      background: #f9f4ee; /* Light ivory after splash */
-      color: #2a2a2a;
-      height: 100%; /* Ensure it takes up space when visible */
-      overflow-y: auto; /* Allow scrolling for main content */
-    }
   </style>
 </head>
 <body>
 
-  <div id="splash-container">
-    <div id="splash-top-left" class="quadrant">
-      </div>
-    <div id="splash-top-right" class="quadrant">
-      <div>
-        <div class="company-title">CARIDDI<br>PRODUCTIONS</div>
-        <div class="company-subtitle">Film &amp; Creative Works</div>
+  <div id="splash-screen">
+    <div id="initial-splash-content">
+      <img src="/cariddi-spiral.svg" alt="Cariddi Productions Spiral" id="splash-svg-image" />
+      <div id="splash-text-overlay">
+        <div class="company-name">CARIDDI PRODUCTIONS</div>
+        <div class="location">Catania, Sicily</div>
       </div>
     </div>
-    <div id="splash-bottom-left" class="quadrant">
-      <div>Catania, Sicily</div>
-    </div>
-    <div id="splash-bottom-right" class="quadrant">
-      <nav class="splash-menu">
+
+    <div id="right-pane-content">
+      <div class="cariddi-film-logo">CARIDDI FILM</div>
+      <div class="film-location">Catania</div>
+      <nav class="main-menu">
         <ul>
-          <li><a href="#projects">Projects</a></li>
-          <li><a href="#about">About Us</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li><a href="#home">HOME</a></li>
+          <li><a href="#projects">PROJECTS</a></li>
+          <li><a href="#about">ABOUT</a></li>
+          <li><a href="#contact">CONTACT US</a></li>
         </ul>
       </nav>
     </div>
   </div>
-  
-  <div id="fallback-spiral-container">
-      <img src="/cariddi-spiral.svg" alt="Cariddi spiral" class="spiral-fallback" />
+
+  <div id="site" hidden> 
+    <h1>Welcome to Cariddi Productions</h1>
   </div>
 
-
-  <div id="site" hidden>
-    <h1>Welcome to Cariddi Productions</h1>
-    <p>This is the main content of your site. The splash screen has finished.</p>
-    </div>
-
-  <script type="module" src="/src/main.js"></script>
+  <script type="module" src="/src/main_2D.js"></script>
 </body>
 </html>
